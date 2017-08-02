@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTML5 Camera Example</title>
+  <style type="text/css">
+    .hide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay></video>
+  <button id="capture">Capture</button>
+  <button id="re-capture" class="hide">Retake Image</button>
+  <canvas id="canvas" class="hide" width="640" height="480"></canvas>
+</body>
+<script type="text/javascript">
+  (function() {
+    var videoEl = document.querySelector('#video'),
+      captureBtn = document.querySelector('#capture'),
+      reCaptureBtn = document.querySelector('#re-capture'),
+      canvasEl = document.querySelector('#canvas');
+
+    captureBtn.addEventListener('click', captureClickListener);
+    reCaptureBtn.addEventListener('click', reCaptureClickListener);
+    videoEl.addEventListener('contextmenu', videoContextMenuListener)
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia(
+        {
+          video: {
+            width: { min: 320, max: 640 },
+            height: { min: 400, max: 480 }
+          }
+        }
+      ).then(function(stream) {
+        videoEl.controls = false;
+        videoEl.src = URL.createObjectURL(stream);
+      }).catch(function(err) {
+        console.log(err);
+      });
+    }
+
+    function captureImage() {
+      canvasEl.getContext('2d').drawImage(videoEl, 0, 0);
+      var x = canvasEl.toDataURL('image/jpeg', 1);
+      console.log(x);
+    }
+
+    function captureClickListener() {
+      videoEl.pause();
+      captureImage();
+      reCaptureBtn.classList.remove('hide');
+      captureBtn.setAttribute('disabled', true);
+    }
+
+    function reCaptureClickListener() {
+      videoEl.play();
+      captureBtn.removeAttribute('disabled');
+    }
+
+    function videoContextMenuListener(e) {
+      e.preventDefault();
+    }
+
+  }());
+</script>
+</html>
+
+<!--
+  https://w3c.github.io/mediacapture-main/archives/20170205/getusermedia.html
+-->
