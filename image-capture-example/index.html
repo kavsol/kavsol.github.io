@@ -13,13 +13,18 @@
   <video id="video" autoplay></video>
   <button id="capture">Capture</button>
   <button id="re-capture" class="hide">Retake Image</button>
-  <span id="image-data-url"></span>
+  <div>
+    <label for="data-url-textarea">Data URL</label>
+    <textarea id="data-url-textarea"></textarea>  
+  </div>
+  
 </body>
 <script type="text/javascript">
   (function() {
     var videoEl = document.querySelector('#video'),
       captureBtn = document.querySelector('#capture'),
-      reCaptureBtn = document.querySelector('#re-capture');
+      reCaptureBtn = document.querySelector('#re-capture'),
+      dataUrlTextArea = document.querySelector('#data-url-textarea');
 
     captureBtn.addEventListener('click', captureClickListener);
     reCaptureBtn.addEventListener('click', reCaptureClickListener);
@@ -30,7 +35,7 @@
       imaging.capture(function(dataUrl) {
         reCaptureBtn.classList.remove('hide');
         captureBtn.setAttribute('disabled', true);
-        console.log(dataUrl);
+        dataUrlTextArea.value = dataUrl;
       });
     }
 
@@ -45,6 +50,8 @@
 
     var imaging = ImageCapture.init({
       videoEl: videoEl,
+      width: 640,
+      height: 480,
       errorCallback: function(err) {
         console.log(err);
       }
