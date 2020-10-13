@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: Customer API
+  description: Some human readable description for the Customer API
+  version: 1.0.0-oas3
+  contact:
+    name: K
+    url: 'https://domain.com'
+    email: k@domain.com
+paths:
+  /customer:
+    get:
+      summary: Used purely for documentation. Reads customer data.
+      operationId: getCustomer
+      description: more info
+      parameters:
+        - in: query
+          name: customerId
+          description: info
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: customer data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customer'
+        '404':
+          description: no data
+    post:
+      summary: add customer
+      operationId: addCustomer
+      description: more info
+      responses:
+        '200':
+          description: successfully added
+          content:
+            text/plain:
+              schema:
+                type: string
+        '405':
+          description: invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customer'
+        description: new customer data
+        required: true
+  '/customer/{customerId}':
+    put:
+      summary: add customer
+      operationId: updateCustomer
+      description: more info
+      parameters:
+        - in: path
+          name: customerId
+          description: Info about customer ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successfully updated
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: customer not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customer'
+        description: updated customer details
+        required: true
+    delete:
+      summary: delete customer
+      description: more info
+      parameters:
+        - in: path
+          name: customerId
+          description: Info about customer ID path param
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successfully deleted
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: customer not found
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+servers:
+  - url: 'https://dev.api.domain.com/cmr/v1'
+    description: Development site
+  - url: 'https://api.domain.com/cmr/v1'
+    description: Prod
+  - url: 'https://{customerId}.domain.com/cmr/v1'
+    description: Customer site
+    variables:
+      customerId:
+        default: demo-user
+        description: Link to customer API site
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://auth.domain.com/authorize'
+          tokenUrl: 'https://auth.domain.com/token'
+          scopes: {}
+  schemas:
+    customer:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        name:
+          type: string
+        active:
+          type: boolean
+        address:
+          type: object
+          properties:
+            lin1:
+              type: string
+            line2:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            zip:
+              type: string
+        contact:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: string
